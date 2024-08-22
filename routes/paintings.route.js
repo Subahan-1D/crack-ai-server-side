@@ -1,9 +1,11 @@
 const express = require("express");
-const { testRoute } = require("../controllers/controllers.routes");
+const { generatePaint, singleImageDetails, generateAllPaintings } = require("../controllers/controllers.routes");
 const router = express.Router();
 
-router.get('/' , testRoute);
-router.get('/generate')
+router.get('/' , generateAllPaintings);
+router.get('/:id',singleImageDetails);
+router.post('/generate', generatePaint);
+
 // router.post('/')
 
 module.exports = router;
