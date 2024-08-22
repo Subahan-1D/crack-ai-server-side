@@ -3,36 +3,18 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 9000;
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Access your API key as an environment variable (see "Set up your API key" above)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-const form = `
-<form method="POST" action="/prompt">
-<textarea name="prompt" id="prompt"></textarea>
-<button type="submit">Generate JSON</button>
-</form>
-`;
-
-//MIDDLEWARE
+const { connect } = require("./utils/dbconnect");
+// GLOBAL MIDDLEWARE
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.get("/prompt", async (req, res) => {
-  res.send(form);
-});
 
-app.post("/prompt", async (req, res) => {
-  let { prompt } = req.body;
-  prompt = prompt + ".data will be a json stringify version. no extra text";
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text();
-  res.send({ data: text, status: 200 });
-});
+connect();
+
+// routes 
+const paintingsRoutes = require("./routes/paintings.route");
+app.use('/paintings',paintingsRoutes)
 
 app.get("/", (req, res) => {
   res.send({ data: "Crack ai Server Side ", status: 200 });
